@@ -1,0 +1,11 @@
+import { IHeaderProps } from "../interfaces/data";
+
+const Header: React.FC<IHeaderProps> = ({ todoCount }) => {
+  return (
+    <h1 className="text-5xl font-bold text-center text-gray-600">
+      Список дел ({todoCount})
+    </h1>
+  );
+};
+
+export default Header;
