@@ -1,37 +1,39 @@
 import { useState } from "react";
 import Header from "./components/Header";
-import Input from "./components/Input";
-import Todo from "./components/Todo";
-import { ITodoList } from "./interfaces/data";
-import EditTodo from "./components/EditTodo";
+import TodoItem from "./components/TodoItem";
+import TodoForm from "./components/TodoForm";
 
-const App: React.FC = () => {
-  const [todoList, setTodoList] = useState<ITodoList[]>([
+export interface ITodoItem {
+  id: number;
+  name: string | undefined;
+  completed: boolean;
+}
+
+const App = () => {
+  const [todoItems, setTodoItems] = useState<ITodoItem[]>([
     { id: 1, name: "Приготовить завтрак", completed: true },
   ]);
 
   const [editId, setEditId] = useState<number | null>(null);
-  const [editTodoValue, setEditTodoValue] = useState("");
 
-  const editTodoId = ({ id, name }: Omit<ITodoList, 'completed'>) => {
+  const editTodoId = (id: number) => {
     setEditId(id);
-    setEditTodoValue(name);
   };
 
   const addTodo = (name: string) => {
-    setTodoList([
-      ...todoList,
+    setTodoItems([
+      ...todoItems,
       {
-        id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1,
+        id: todoItems.length === 0 ? 1 : todoItems[todoItems.length - 1].id + 1,
         name,
         completed: false,
       },
     ]);
   };
-  
-  const todoComplete = (id: ITodoList["id"]) => {
-    setTodoList(
-      todoList.map((item) => {
+
+  const todoComplete = (id: number) => {
+    setTodoItems(
+      todoItems.map((item) => {
         if (item.id == id) {
           return { ...item, completed: !item.completed };
         }
@@ -40,13 +42,13 @@ const App: React.FC = () => {
     );
   };
 
-  const deleteTodo = (id: ITodoList["id"]) => {
-    setTodoList(todoList.filter((todo) => todo.id !== id));
+  const deleteTodo = (id: number) => {
+    setTodoItems(todoItems.filter((todo) => todo.id !== id));
   };
 
-  const editTodo = (name: ITodoList["name"]) => {
-    setTodoList(
-      todoList.map((todo) => {
+  const editTodo = (name: string | undefined) => {
+    setTodoItems(
+      todoItems.map((todo) => {
         if (todo.id === editId) {
           return { ...todo, name };
         }
@@ -58,31 +60,27 @@ const App: React.FC = () => {
 
   return (
     <div className="w-[700px] mx-auto mt-20">
-      <Header todoCount={todoList.length} />
-      <Input addTodo={addTodo} />
-      {todoList.map((todoItem) => {
-        if (todoItem.id == editId) {
-          return (
-            <EditTodo
-              todoItem={todoItem}
-              key={todoItem.id}
-              editTodo={editTodo}
-              setEditTodoValue={setEditTodoValue}
-              editTodoValue={editTodoValue}
-            />
-          );
-        } else {
-          return (
-            <Todo
-              todoComplete={todoComplete}
-              deleteTodo={deleteTodo}
-              todoItem={todoItem}
-              key={todoItem.id}
-              editTodoId={editTodoId}
-            />
-          );
-        }
-      })}
+      <Header todoCount={todoItems.length} />
+      <TodoForm addTodo={addTodo} mode="add" editTodo={editTodo} />
+      {todoItems.map((todoItem) =>
+        todoItem.id === editId ? (
+          <TodoForm
+            addTodo={addTodo}
+            mode="edit"
+            editTodo={editTodo}
+            todoItem={todoItem.name}
+            key={todoItem.id}
+          />
+        ) : (
+          <TodoItem
+            todoComplete={todoComplete}
+            deleteTodo={deleteTodo}
+            todoItem={todoItem}
+            editTodoId={editTodoId}
+            key={todoItem.id}
+          />
+        )
+      )}
     </div>
   );
 };
