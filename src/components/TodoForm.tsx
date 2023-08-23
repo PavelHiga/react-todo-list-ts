@@ -1,21 +1,15 @@
 import { useState } from "react";
+import { appUseDispatch } from "../hook";
+import { addTodo, editTodo } from "../redux/todoSlice";
 
 interface ITodoForm {
   mode: "add" | "edit";
-  addTodo: (name: string) => void;
-  editTodo: (value: string | undefined) => void;
-  todoItem?: string;
+  todoItem?: string | undefined;
 }
 
-
-const TodoForm: React.FC<ITodoForm> = ({
-  addTodo,
-  mode,
-  editTodo,
-  todoItem,
-}) => {
+const TodoForm: React.FC<ITodoForm> = ({ mode, todoItem }) => {
+  const dispatch = appUseDispatch();
   const isEdit = mode === "edit";
-
   const [value, setValue] = useState("");
   const [editValue, setEditValue] = useState<string | undefined>(todoItem);
 
@@ -24,7 +18,7 @@ const TodoForm: React.FC<ITodoForm> = ({
   };
 
   const onClick = () => {
-    isEdit ? editTodo(editValue) : addTodo(value);
+    isEdit ? dispatch(editTodo(editValue)) : dispatch(addTodo(value));
     setValue("");
   };
 
