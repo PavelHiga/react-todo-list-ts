@@ -30,6 +30,7 @@ const TodoForm: React.FC<ITodoForm> = ({ mode, todoItem }) => {
         className=" rounded-xl w-full bg-g p-5 text-2xl "
         placeholder="Введите задачу"
         type="text"
+        maxLength={35}
       />
 
       <button
