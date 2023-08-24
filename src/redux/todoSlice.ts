@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type Todo = {
+interface Todo {
   id: number;
   name: string | undefined;
   completed: boolean;
 };
 
-type TodosState = {
+interface TodosState {
   todos: Todo[];
   editTodoId: number | null;
 };
